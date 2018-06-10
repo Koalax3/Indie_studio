@@ -13,6 +13,7 @@
 #include "Range.hpp"
 #include "Mask.hpp"
 #include "indie.hpp"
+#include "Bomb.hpp"
 
 class Map : public Range
 {
@@ -48,6 +49,7 @@ public:
 	Position rotationPI2(Position Pos);
 	Position rotationPI(Position Pos);
 	Position rotation3PI2(Position Pos);
+	int Blast(Bomb *&bomb, ISceneManager *pManager);
 private:
 	int Size;
 	absolute Seed;

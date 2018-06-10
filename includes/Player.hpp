@@ -21,12 +21,20 @@ public:
 	void MoveRight(float speed);
 	void MoveUp(float speed);
 	void MoveDown(float speed);
+	int getId();
+	void setId(int id);
+	bool isLife();
+	void setLife(bool stat);
+	void CheckBombs();
+	std::vector<Bomb *> *getStockBomb() const;
 
 protected:
 	ISceneManager &smgr;
 	IVideoDriver &driver;
-	std::vector<Bomb *> StockBomb;
+	std::vector<Bomb *> *StockBomb;
 	int MaxBomb;
+	int Id;
+	bool Life;
 };
 
 #endif /* !PLAYER_HPP_ */

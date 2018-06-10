@@ -22,6 +22,7 @@ public:
 private:
     IAnimatedMeshSceneNode *node;
     ISceneManager &smgr;
+    scene::ISceneNodeAnimator *anim;
 };
 
 

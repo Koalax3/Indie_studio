@@ -11,7 +11,10 @@ Camera::Camera(ISceneManager &smgr, float speed, MType type) : smgr(smgr)
 			FPSMode(smgr, speed);
 			break;
 		case ARENA :
-			ArenaMode(smgr, speed);
+			ArenaMode(smgr);
+			break;
+		case MENU :
+			MenuMode(smgr);
 			break;
 	}
 }
@@ -37,10 +40,16 @@ void Camera::FPSMode(ISceneManager &smgr, float speed)
 	setPos(0, 2, 0);
 }
 
-void Camera::ArenaMode(ISceneManager &smgr, float speed)
+void Camera::ArenaMode(ISceneManager &smgr)
 {
 	camera = smgr.addCameraSceneNode(0,core::vector3df(0,19,15));
 	camera->setTarget(core::vector3df(0,-9,0));
+}
+
+void Camera::MenuMode(ISceneManager &smgr)
+{
+	camera = smgr.addCameraSceneNode(0,core::vector3df(0,10,5));
+	camera->setTarget(core::vector3df(0,-27,0));
 }
 
 void Camera::setPos(float z, float y, float x)

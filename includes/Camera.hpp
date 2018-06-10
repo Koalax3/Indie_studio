@@ -12,7 +12,8 @@ public:
     Camera(ISceneManager &smgr, float speed, MType type = FPS);
     virtual ~Camera();
     void FPSMode(ISceneManager &smgr, float speed);
-    void ArenaMode(ISceneManager &smgr, float speed);
+    void ArenaMode(ISceneManager &smgr);
+    void MenuMode(ISceneManager &smgr);
     ICameraSceneNode *getCamera() const;
     void setCamera(ICameraSceneNode *camera);
     void setPos(float z,float y, float x);

@@ -27,6 +27,12 @@ void Game::arena(int size)
 		arena(size);
 }
 
+void Game::menu()
+{
+	if (Gui->loopMenu() == ARENA)
+		arena();
+}
+
 Game::~Game()
 {
 }

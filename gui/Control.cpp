@@ -11,6 +11,9 @@ Control::Control()
 {
 	for (u32 i = 0; i < KEY_KEY_CODES_COUNT; ++i)
 		KeyIsDown[i] = false;
+	for (int i = 0; i < 4; i++)
+		for (int y = 0; y < 5; y++)
+			TouchPlayer[i][y] = DEFAULTCONTROL[i][y];
 }
 
 Control::~Control()
@@ -31,15 +34,15 @@ bool Control::IsKeyDown(EKEY_CODE keyCode) const
 
 void	Control::ControlPlayer(Player *player)
 {
-	if (IsKeyDown(KEY_RIGHT))
-		player->MoveRight(0.1);
-	if (IsKeyDown(KEY_LEFT))
+	if (IsKeyDown(TouchPlayer[player->getId()][0]))
+		player->MoveUp(0.1);	
+	if (IsKeyDown(TouchPlayer[player->getId()][1]))
 		player->MoveLeft(0.1);		
-	if (IsKeyDown(KEY_UP))
-		player->MoveUp(0.1);		
-	if (IsKeyDown(KEY_DOWN))
+	if (IsKeyDown(TouchPlayer[player->getId()][2]))
 		player->MoveDown(0.1);		
-	if (IsKeyDown(KEY_SPACE))
+	if (IsKeyDown(TouchPlayer[player->getId()][3]))
+		player->MoveRight(0.1);
+	if (IsKeyDown(TouchPlayer[player->getId()][4]))
 		player->DropBomb();	
 }
 

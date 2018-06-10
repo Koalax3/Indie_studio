@@ -24,6 +24,7 @@ class Control : public IEventReceiver
 
       private:
 	bool KeyIsDown[KEY_KEY_CODES_COUNT];
+	EKEY_CODE TouchPlayer[4][5];
 };
 
 #endif /* !CONTROL_HPP_ */

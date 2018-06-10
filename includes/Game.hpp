@@ -13,7 +13,8 @@ class Game
 {
 public:
 	Game();
-	void arena(int size = 16);
+	void arena(int size = 15);
+	void menu();
 	void initMapPath();
 	~Game();
 

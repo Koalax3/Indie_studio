@@ -12,7 +12,7 @@ public:
     Terrain(ISceneManager &smgr, IVideoDriver &driver, irr::io::path pathTexture = "");
     virtual ~Terrain();
     void addCollision(scene::IMetaTriangleSelector &metaSelector);
-    void changeTexture(irr::io::path pathTexture);
+    void changeTexture(irr::io::path pathTexture, float detail);
     void applyScene();
 
 

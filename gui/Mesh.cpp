@@ -42,8 +42,10 @@ void Mesh::applyCollision(IMetaTriangleSelector *metaSelector)
 	scene::ISceneNodeAnimator *anim = smgr.createCollisionResponseAnimator(
 	    metaSelector, node, core::vector3df(0.5, 0.01, 0.5),
 	    core::vector3df(0, -5, 0), core::vector3df(0, 0, 0));
-	node->addAnimator(anim);
-	anim->drop();
+	if (this->anim != anim){
+		node->removeAnimators();
+		node->addAnimator(anim);
+	}
 }
 
 void Mesh::addTexture(IVideoDriver &driver, irr::io::path pathTexture)
