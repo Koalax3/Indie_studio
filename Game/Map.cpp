@@ -51,7 +51,7 @@ void Map::MapGen()
 			if ((abs(i) % 2 == 1 && abs(j) % 2 == 1) ||
 			    (i == Min || j == Min || i == Max || j == Max))
 				tmpJ->addEntity(BRICK);
-			else if ((i || j) && (abs(i) < Max - 2
+			else if ((abs(i) < Max - 2
 				 || abs(j) < Max - 2))
 				tmpJ->addEntity(BOX);
 			tmpI->push_back(tmpJ);
@@ -174,7 +174,8 @@ Chunk *Map::getChunk(Position Pos)
 	int j;
 
 	for (i = 0; i < Field->size() &&
-		    Field->at(i).at(0)->getX() < Pos.getX(); i++);
+		    Field->at(i).at(0)->getX() < Pos.getX() &&
+		    abs(Field->at(i).at(0)->getX()) <= Max; i++);
 	for (j = 0; Field->at(i).size() &&
 		    Field->at(i).at(j)->getY() < Pos.getY(); j++);
 	return Field->at(i).at(j);
@@ -291,7 +292,15 @@ Position Map::rotation3PI2(Position Pos)
 }
 
 
-int Map::Blast(Bomb *&bomb, ISceneManager *pManager)
+void Map::Blast(Bomb *&bomb, ISceneManager *pManager)
+{
+	BlastRight(bomb, pManager);
+	BlastLeft(bomb, pManager);
+	BlastUp(bomb, pManager);
+	BlastDown(bomb, pManager);
+}
+
+void Map::BlastRight(Bomb *&bomb, ISceneManager *pManager)
 {
 	int res = 0;
 	double x;
@@ -303,12 +312,6 @@ int Map::Blast(Bomb *&bomb, ISceneManager *pManager)
 	for (int i = 0; i <= bomb->getRange() && block->getEntityType() !=
 						 BRICK;
 	     i++) {
-		std::cout << "pos : " << x << " : " << y <<
-			  std::endl;
-		std::cout << "POS : " << Pos.getX() << " : " << Pos.getY() <<
-			  std::endl;
-		std::cout << ENTITY_TYPE[block->getEntityType()] <<
-			  std::endl;
 		if (block->getEntityType() == BOX) {
 			getChunk(Pos)->getEntities()->back()->getSprite()
 				     ->getNode()->setVisible(false);
@@ -318,9 +321,79 @@ int Map::Blast(Bomb *&bomb, ISceneManager *pManager)
 		}
 		Pos.setX(x + i + 1);
 		block = getChunk(Pos)->getEntities()->back();
-		res = 1;
 	}
-	std::cout << std::endl;
-	return res;
 }
 
+void Map::BlastLeft(Bomb *&bomb, ISceneManager *pManager)
+{
+	int res = 0;
+	double x;
+	double y;
+	modf(bomb->getX() / 2, &x);
+	modf(bomb->getZ() / 2, &y);
+	auto Pos = Position(x , y);
+	auto block = getChunk(Pos)->getEntities()->back();
+	for (int i = 0; i <= bomb->getRange() && block->getEntityType() !=
+						 BRICK;
+	     i++) {
+		if (block->getEntityType() == BOX) {
+			getChunk(Pos)->getEntities()->back()->getSprite()
+				     ->getNode()->setVisible(false);
+			getChunk(Pos)->getEntities()->back()->getSprite()
+				     ->getNode()->setTriangleSelector(nullptr);
+			getChunk(Pos)->getEntities()->pop_back();
+		}
+		Pos.setX(x - i - 1);
+		block = getChunk(Pos)->getEntities()->back();
+	}
+}
+
+
+void Map::BlastUp(Bomb *&bomb, ISceneManager *pManager)
+{
+	int res = 0;
+	double x;
+	double y;
+	modf(bomb->getX() / 2, &x);
+	modf(bomb->getZ() / 2, &y);
+	auto Pos = Position(x , y);
+	auto block = getChunk(Pos)->getEntities()->back();
+	for (int i = 0; i <= bomb->getRange() && block->getEntityType() !=
+						 BRICK;
+	     i++) {
+		if (block->getEntityType() == BOX) {
+			getChunk(Pos)->getEntities()->back()->getSprite()
+				     ->getNode()->setVisible(false);
+			getChunk(Pos)->getEntities()->back()->getSprite()
+				     ->getNode()->setTriangleSelector(nullptr);
+			getChunk(Pos)->getEntities()->pop_back();
+		}
+		Pos.setY(y + i + 1);
+		block = getChunk(Pos)->getEntities()->back();
+	}
+}
+
+
+void Map::BlastDown(Bomb *&bomb, ISceneManager *pManager)
+{
+	int res = 0;
+	double x;
+	double y;
+	modf(bomb->getX() / 2, &x);
+	modf(bomb->getZ() / 2, &y);
+	auto Pos = Position(x , y);
+	auto block = getChunk(Pos)->getEntities()->back();
+	for (int i = 0; i <= bomb->getRange() && block->getEntityType() !=
+						 BRICK;
+	     i++) {
+		if (block->getEntityType() == BOX) {
+			getChunk(Pos)->getEntities()->back()->getSprite()
+				     ->getNode()->setVisible(false);
+			getChunk(Pos)->getEntities()->back()->getSprite()
+				     ->getNode()->setTriangleSelector(nullptr);
+			getChunk(Pos)->getEntities()->pop_back();
+		}
+		Pos.setY(y - i - 1);
+		block = getChunk(Pos)->getEntities()->back();
+	}
+}

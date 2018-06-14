@@ -49,7 +49,12 @@ public:
 	Position rotationPI2(Position Pos);
 	Position rotationPI(Position Pos);
 	Position rotation3PI2(Position Pos);
-	int Blast(Bomb *&bomb, ISceneManager *pManager);
+	void Blast(Bomb *&bomb, ISceneManager *pManager);
+	void BlastRight(Bomb *&bomb, ISceneManager *pManager);
+	void BlastLeft(Bomb *&bomb, ISceneManager *pManager);
+	void BlastUp(Bomb *&bomb, ISceneManager *pManager);
+	void BlastDown(Bomb *&bomb, ISceneManager *pManager);
+
 private:
 	int Size;
 	absolute Seed;

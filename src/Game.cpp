@@ -22,9 +22,13 @@ void Game::initMapPath()
 
 void Game::arena(int size)
 {
+	MType mode;
 	initMapPath();
-	if (Gui->loopArena(size, Path) == ARENA)
+	mode = Gui->loopArena(size, Path);
+	if (mode == ARENA)
 		arena(size);
+	if (mode == VICTORY)
+		Gui->loopVictory();
 }
 
 void Game::menu()

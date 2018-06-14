@@ -13,9 +13,10 @@
 
 class Player: public Entity {
 public:
-	Player(ISceneManager &smgr, IVideoDriver &driver, Position Pos = (0, 0, 0));
+	Player(ISceneManager &smgr, IVideoDriver &driver,
+	       Position Pos = (0, 0, 0), bool IA = true);
 	~Player();
-	void DropBomb();
+	bool DropBomb();
 	void addSprite(int index = 0);
 	void MoveLeft(float speed);
 	void MoveRight(float speed);
@@ -26,8 +27,23 @@ public:
 	bool isLife();
 	void setLife(bool stat);
 	void CheckBombs();
+	void addCollisonBomb(IMetaTriangleSelector &selector);
 	std::vector<Bomb *> *getStockBomb() const;
-
+	void Move(Compass direction, float speed);
+	Position getFront(Compass dir);
+	ISceneManager &getSmgr() const;
+	IVideoDriver &getDriver() const;
+	int getMaxBomb() const;
+	int getID() const;
+	bool isIA() const;
+	void setSmgr(ISceneManager &smgr);
+	void setDriver(IVideoDriver &driver);
+	void setStockBomb(std::vector<Bomb *> *StockBomb);
+	void setMaxBomb(int MaxBomb);
+	void setID(int ID);
+	void setIA(bool IA);
+	void HitboxBomb(Bomb *bomba);
+	double getLifeTimer() const;
 protected:
 	ISceneManager &smgr;
 	IVideoDriver &driver;
@@ -35,6 +51,9 @@ protected:
 	int MaxBomb;
 	int Id;
 	bool Life;
+	int ID;
+	bool IA;
+	double lifeTimer;
 };
 
 #endif /* !PLAYER_HPP_ */

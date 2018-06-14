@@ -15,5 +15,5 @@
 int main()
 {
 	Game game;
-	game.arena();
+	game.menu();
 }

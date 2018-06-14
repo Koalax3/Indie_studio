@@ -21,6 +21,10 @@ public:
 	void setY(double Y);
 	void setZ(int Z);
 	void setPosition(Position Pos);
+	bool operator==(const Position &rhs) const;
+	bool operator!=(const Position &rhs) const;
+	void operator+(const Position &rhs);
+	void operator-(const Position &rhs);
 protected:
 	float X;
 	float Y;

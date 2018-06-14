@@ -33,6 +33,7 @@ public:
 	void CreateArena(int size, MapPath Path);
 	MType loopArena(int size, MapPath Path);
 	MType loopMenu();
+	MType loopVictory();
 	int isVictory();
 	void CheckBombs(int i);
 	void GiveCollision();

@@ -7,6 +7,7 @@
 
 #include "Core.hpp"
 #include "MainMenu.hpp"
+#include "irrKlang.h"
 
 Core::Core()
 {
@@ -90,7 +91,12 @@ void Core::initBomberman(int size)
 	int posx[4] = {(size - 3), (-size + 3), (size - 3), (-size + 3)};
 	int posy[4] = {(size - 3), (size - 3), (-size + 3), (-size + 3)};
 	for (int i = 0; i < 4; i++) {
-		Bomberman[i] = new Player(*smgr, *driver, Position(posx[i], 0.5, posy[i]));
+		if (i <= 1)
+			Bomberman[i] = new Player(*smgr, *driver, Position(posx[i],
+									   0.5, posy[i]), false);
+		else
+			Bomberman[i] = new Player(*smgr, *driver, Position
+				(posx[i], 0.5, posy[i]), true);
 		Bomberman[i]->addSprite(i);
 		Bomberman[i]->setId(i);
 	}
@@ -207,6 +213,30 @@ void Core::buttonSkin(t_context &context)
 	}
 }
 
+MType Core::loopVictory()
+{
+	IGUIStaticText *title = guienv->addStaticText(L"Victory\nThe Winner is:", irr::core::rect<irr::s32>(
+			RES_WIDTH / 2 - 100, RES_HEIGHT / 2 - 200,
+			RES_WIDTH / 2 + 250, RES_HEIGHT / 2 - 200 +150));
+	Bomberman[Winner]->getSprite()->setPos(0,0,0);
+	Bomberman[Winner]->getSprite()->setRot(275, 24, 298);
+	Bomberman[Winner]->getSprite()->getNode()->setScale(core::vector3df(1.5,1.5,1.5));
+	camera = new Camera(*smgr, 0.01, MENU);	
+	while (device->run()) {
+	//	menu->changeSize(driver->getScreenSize());
+		driver->beginScene(true, true, SColor(255, 64, 115, 158));
+		smgr->drawAll();
+		guienv->drawAll();
+		driver->endScene();
+		State = Controller.ControlState();
+		if (State != RUN) {
+			smgr->clear();
+			Background->applyScene();
+			return END;
+		}
+	}
+}
+
 MType Core::loopMenu()
 {
 	IGUIStaticText *title = guienv->addStaticText(L"BomberMan\nMercury Edition", irr::core::rect<irr::s32>(
@@ -214,16 +244,17 @@ MType Core::loopMenu()
 			RES_WIDTH / 2 + 250, RES_HEIGHT / 2 - 200 +150));
 	camera = new Camera(*smgr, 0.01, MENU);
 	Mesh *mesh = new Mesh(*smgr, BMESHIDLE, core::vector3df(5, 1, 7));
-	mesh->addTexture(*driver, BTEXTURE[6]);
+	mesh->addTexture(*driver, BTEXTURE[0]);
 	mesh->getNode()->setScale(core::vector3df(1.5,1.5,1.5));
 	t_context context = getContext();
 	title->setOverrideFont(context.font);
 	MenuEvent event(context);
-
+	irrklang::ISoundEngine *engine = irrklang::createIrrKlangDevice();
 	buttonSkin(context);
 	callMainMenu(context);
 	device->setEventReceiver(&event);
 	mesh->setRot(275, 24, 298);
+	engine->play2D("media/IrrlichtTheme.ogg", true);
 	while (device->run() && context.launch == 0) {
 		menu->changeSize(driver->getScreenSize());
 		driver->beginScene(true, true, SColor(255, 64, 115, 158));
@@ -231,6 +262,7 @@ MType Core::loopMenu()
 		guienv->drawAll();
 		driver->endScene();
 	}
+	engine->drop();
 	mesh->getNode()->setVisible(false);
 	if (context.launch != 0)
 		return ARENA;
@@ -242,15 +274,19 @@ void Core::GiveCollision()
 	metaSelector->removeAllTriangleSelectors();
 	Arena->MapCollision(*metaSelector);
 	Background->addCollision(*metaSelector);
-	Bomberman[0]->getSprite()->applyCollision(metaSelector);
-	Bomberman[1]->getSprite()->applyCollision(metaSelector);
+	for (int i = 0; i < 4; i++)
+		Bomberman[i]->addCollisonBomb(*metaSelector);
+	for (int i = 0; i < 4; i++)
+		Bomberman[i]->getSprite()->applyCollision(metaSelector);
 }
 void Core::CreateArena(int size, MapPath Path)
 {
+	irrklang::ISoundEngine *engine = irrklang::createIrrKlangDevice();	
+	engine->play2D("media/Arena.ogg", true);	
 	guienv->clear();
 	device->setEventReceiver(&Controller);
-	Background->changeTexture("media/lava.jpeg", 0.5);
-	Arena = new Map(size, 0, RANDOM);
+	Background->changeTexture("media/weed.jpg", 0.7);
+	Arena = new Map(size, 0, CLASSIC);
 	initBomberman(Arena->getSize());
 	Arena->MapGenGui(*smgr, *driver, Path);
 	GiveCollision();
@@ -283,7 +319,11 @@ MType Core::loopArena(int size, MapPath Path)
 		driver->endScene();
 		windowFPS();
 		for (int i = 0; i < 4; i++) {
-			Controller.ControlPlayer(Bomberman[i]);
+			if (!Bomberman[i]->isIA()) {
+				Controller.ControlPlayer(Bomberman[i]);
+			} else {
+				Controller.IA(Bomberman, i, Arena);
+			}
 			Bomberman[i]->CheckBombs();
 			CheckBombs(i);
 		}
@@ -303,15 +343,18 @@ void Core::CheckBombs(int i)
 {
 	for (int b = 0; b < Bomberman[i]->getStockBomb()->size(); b++) {
 		if (Bomberman[i]->getStockBomb()->at(b)->isBlast()) {
-			if (Arena->Blast(
-				Bomberman[i]->getStockBomb()->at(b),
-				smgr) == 1)
-				GiveCollision();
-			Bomberman[i]->getStockBomb()->at(i)->getSprite()
-				->getNode()->setVisible(false);
-			Bomberman[i]->getStockBomb()->erase
-				(Bomberman[i]->getStockBomb()->begin() +
-				i);
+			Arena->Blast(
+				Bomberman[i]->getStockBomb()->at(b), smgr);
+			for (int j = 0; j < 4; j++) {
+				Bomberman[j]->HitboxBomb(
+					Bomberman[i]->getStockBomb()->at(b));
 			}
+			Bomberman[i]->getStockBomb()->at(b)->getSprite()
+				    ->getNode()->setVisible(false);
+			Bomberman[i]->getStockBomb()->erase
+				(Bomberman[i]->getStockBomb()->begin() + b);
+			GiveCollision();
 		}
+	}
 }
+

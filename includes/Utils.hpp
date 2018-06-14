@@ -31,11 +31,11 @@ const std::string ENTITY_DISPLAY[] = {"", "*", "M", " ",
 				      "@", "B", "¤", "#"};
 const std::string COMPASS[] = {"NONE", "DOWN", "LEFT", "RIGHT", "UP"};
 
-const io::path BTEXTURE[] = {"media/Bomberman/AO.png",
+const io::path BTEXTURE[] = {"media/Bomberman/Freddy_mercury.png",
 	"media/Bomberman/AO_blue.png", "media/Bomberman/AO_red.png",
-	"media/Bomberman/AO_yellow.png, media/Bomberman/AO_green.png",
+	"media/Bomberman/AO_yellow.png", "media/Bomberman/AO_green.png",
 	"media/Bomberman/AO_sky_blue.png", "media/Bomberman/AO_black.png",
-	"media/Bomberman/Freddy_mercury.png"};
+	"media/Bomberman/AO.png"};
 const io::path BMESH = "media/Bomberman/bomberman_walk.ms3d";
 const io::path BMESHIDLE = "media/Bomberman/bomberman_idle.ms3d";
 
